@@ -1,22 +1,22 @@
 import { AddIcon, HamburgerIcon } from '@chakra-ui/icons'
 import { Box, Button, Flex, Image, Menu, MenuButton, MenuItem, MenuList, Stack, Text, useToast } from '@chakra-ui/react'
 import React, { useState } from 'react'
-import { useFetchChats } from '../../hooks/useQuery'
+import { useFetchChats } from '@/hooks/useQuery'
 import { getSender } from '../config/chatLogics'
 import { useChatContext } from '../Context/ChatProvider'
 import ChatLoading from './ChatLoading'
 import GroupChatModal from './modals/GroupChatModal'
 import UserChatItem from './User/UserChatItem'
+import { IChat } from 'types'
 
 
 const MyChats = () => {
   const {selectedChat, setSelectedChat, chats, setChats, notifications, setNotifications} = useChatContext()
-  const [loggedUser, setLoggedUser] = useState(null)
   const toast = useToast();
   const {
     isLoading
   } = useFetchChats({
-    onSuccess: (data) => {
+    onSuccess: (data: IChat[]) => {
       setChats(data)
     },
     onError: (err) => {
@@ -31,7 +31,7 @@ const MyChats = () => {
     }
   })
 
-  const handleNotification = (chat) => {
+  const handleNotification = (chat: IChat) => {
     setNotifications(notifications.filter((n) => n?.chat?._id !== chat?._id))
   }
 

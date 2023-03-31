@@ -1,6 +1,7 @@
 import { Types } from "mongoose"
 
 export interface IUser {
+    _id: string;
     name: string,
     email: string,
     picture: string,
@@ -11,6 +12,7 @@ export interface IUserModel extends IUser {
 }
 
 export interface IChat {
+    _id: string;
     chatName: string,
     isGroup: boolean,
     groupImage: string,
@@ -29,9 +31,10 @@ export interface IChatModel {
 }
 
 export interface IMessage {
+    _id: string;
     sender: IUser,
     content:string,
-    chat: IUser,
+    chat: IChat,
 }
 
 export interface IMessageModel {

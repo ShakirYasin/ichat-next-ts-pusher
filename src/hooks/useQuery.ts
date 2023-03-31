@@ -1,9 +1,10 @@
-import { useQuery } from "react-query";
-import { useChatContext } from "../src/Context/ChatProvider";
-import axios from '../utils/axios'
+import { useQuery, UseQueryOptions } from "react-query";
+import { useChatContext } from "@/context/ChatProvider";
+import axios from '@/utils/axios'
+import { IChat } from "types";
 
     
-export const useSearch = (keyword = "", options) => {
+export const useSearch = (keyword = "", options: UseQueryOptions<unknown, unknown, unknown>) => {
     return useQuery({
         queryKey: ['search', keyword],
         queryFn: async () => {
@@ -14,8 +15,8 @@ export const useSearch = (keyword = "", options) => {
     })
 }
     
-export const useFetchChats = (options) => {
-    return useQuery({
+export const useFetchChats = (options: UseQueryOptions<IChat[], unknown, IChat[]>) => {
+    return useQuery<IChat[], unknown, IChat[]>({
         queryKey: ['chats'],
         queryFn: async () => {
             const {data} = await axios.get(`/chat`)
@@ -26,7 +27,7 @@ export const useFetchChats = (options) => {
     })
 }
     
-export const useFetchMessages = (values, options) => {
+export const useFetchMessages = (values: {chatId: string}, options: UseQueryOptions<unknown, unknown, unknown>) => {
     const {selectedChat} = useChatContext()
     return useQuery({
         queryKey: ['messages', selectedChat?._id],

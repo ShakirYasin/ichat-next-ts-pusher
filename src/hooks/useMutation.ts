@@ -1,8 +1,9 @@
-import {useMutation, useQueryClient} from "react-query"
+import {useMutation, UseMutationOptions, useQueryClient} from "react-query"
 import axios from "../utils/axios"
 import {useChatContext} from "@/context/ChatProvider"
+import { unknown } from "zod"
 
-export const useSignUp = (options) => {
+export const useSignUp = (options: UseMutationOptions<unknown, unknown, unknown>) => {
     const {setUser} = useChatContext()
     return useMutation(
         async (values) => {
@@ -15,13 +16,13 @@ export const useSignUp = (options) => {
                 console.log({RegisterResponse: data});
                 setUser(data)
                 axios.defaults.headers['Authorization'] = `Bearer ${data?.token}`
-                options?.onSuccess?.(data);
+                options?.onSuccess?.(data, unknown, unknown);
             } 
         }
         )
     }
     
-export const useLogin = (options) => {
+export const useLogin = (options: UseMutationOptions<unknown, unknown, unknown>) => {
     const {setUser} = useChatContext()
     return useMutation(
         async (values) => {
@@ -34,13 +35,13 @@ export const useLogin = (options) => {
                 console.log({LoginResponse: data});
                 setUser(data)
                 axios.defaults.headers['Authorization'] = `Bearer ${data?.token}`
-                options?.onSuccess?.(data);
+                options?.onSuccess?.(data, unknown, unknown);
             } 
         }
     )
 }
     
-export const useAccessChat = (options) => {
+export const useAccessChat = (options: UseMutationOptions<unknown, unknown, unknown>) => {
     const {setSelectedChat} = useChatContext()
     return useMutation(
         async ({userId}) => {
@@ -52,16 +53,16 @@ export const useAccessChat = (options) => {
             onSuccess: (data) => {
                 console.log({AccessChatResponse: data});
                 setSelectedChat(data)
-                options?.onSuccess?.(data);
+                options?.onSuccess?.(data, unknown, unknown);
             },
             onError: (err) => {
-                options?.onError?.(err);
+                options?.onError?.(err, unknown, unknown);
             } 
         }
     )
 }
     
-export const useCreateGroupChat = (options) => {
+export const useCreateGroupChat = (options: UseMutationOptions<unknown, unknown, unknown>) => {
     const {setSelectedChat, setChats} = useChatContext()
     return useMutation(
         async (values) => {
@@ -74,16 +75,16 @@ export const useCreateGroupChat = (options) => {
                 console.log({CreateGroupChat: data});
                 setChats(prev => [data, ...prev])
                 setSelectedChat(data)
-                options?.onSuccess?.(data);
+                options?.onSuccess?.(data, unknown, unknown);
             },
             onError: (err) => {
-                options?.onError?.(err);
+                options?.onError?.(err, unknown, unknown);
             } 
         }
     )
 }
     
-export const useRenameGroupChat = (options) => {
+export const useRenameGroupChat = (options: UseMutationOptions<unknown, unknown, unknown>) => {
     const queryClient = useQueryClient()
     const {setSelectedChat} = useChatContext()
     return useMutation(
@@ -97,16 +98,16 @@ export const useRenameGroupChat = (options) => {
                 console.log({RenamedChat: data});
                 queryClient.invalidateQueries("chats")
                 setSelectedChat(data)
-                options?.onSuccess?.(data);
+                options?.onSuccess?.(data,unknown,unknown);
             },
             onError: (err) => {
-                options?.onError?.(err);
+                options?.onError?.(err, unknown, unknown);
             } 
         }
     )
 }
     
-export const useAddUserToGroup = (options) => {
+export const useAddUserToGroup = (options: UseMutationOptions<unknown, unknown, unknown>) => {
     const queryClient = useQueryClient()
     const {setSelectedChat} = useChatContext()
     return useMutation(
@@ -120,16 +121,16 @@ export const useAddUserToGroup = (options) => {
                 console.log({RenamedChat: data});
                 queryClient.invalidateQueries("chats")
                 setSelectedChat(data)
-                options?.onSuccess?.(data);
+                options?.onSuccess?.(data, unknown, unknown);
             },
             onError: (err) => {
-                options?.onError?.(err);
+                options?.onError?.(err, unknown, unknown);
             } 
         }
     )
 }
     
-export const useRemoveUserFromGroup = (options) => {
+export const useRemoveUserFromGroup = (options: UseMutationOptions<unknown, unknown, unknown>) => {
     const queryClient = useQueryClient()
     const {setSelectedChat} = useChatContext()
     return useMutation(
@@ -143,17 +144,17 @@ export const useRemoveUserFromGroup = (options) => {
                 console.log({RenamedChat: data});
                 queryClient.invalidateQueries("chats")
                 // setSelectedChat(data)
-                options?.onSuccess?.(data);
+                options?.onSuccess?.(data, unknown, unknown);
             },
             onError: (err) => {
-                options?.onError?.(err);
+                options?.onError?.(err, unknown, unknown);
             } 
         }
     )
 }
 
    
-export const useSendMessage = (options) => {
+export const useSendMessage = (options: UseMutationOptions<unknown, unknown, unknown>) => {
     const {setSelectedChat} = useChatContext()
     return useMutation(
         async (values) => {
@@ -171,7 +172,7 @@ export const useSendMessage = (options) => {
                     ...prev,
                     latestMessage
                 }))
-                options?.onSuccess?.(data);
+                options?.onSuccess?.(data, unknown, unknown);
             } 
         }
     )

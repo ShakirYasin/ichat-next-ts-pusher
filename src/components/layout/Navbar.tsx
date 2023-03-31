@@ -3,15 +3,15 @@ import {Avatar, Badge, Box, Button, Flex, Menu, MenuButton, MenuDivider, MenuIte
 import {BellIcon, Search2Icon, ChevronDownIcon} from '@chakra-ui/icons'
 import {useChatContext} from "../../Context/ChatProvider"
 import ProfileModal from '../modals/ProfileModal'
-import SideDrawer from '../SideDrawer'
 import SearchModal from '../modals/SearchModal'
-import {getSender} from "../../config/chatLogics"
+import {getSender} from "@/config/chatLogics"
+import { IMessage } from 'types'
 
 const Navbar = () => {
   const {user, Logout, notifications, setNotifications, setSelectedChat} = useChatContext()
   const {isOpen, onOpen, onClose} = useDisclosure()
   useEffect(() => {
-    const keyDownHandler = (e) => {
+    const keyDownHandler = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.key === "k") {
         e.preventDefault();
         onOpen()
@@ -50,8 +50,8 @@ const Navbar = () => {
               </Box>
             </MenuButton>
             <MenuList p={1}>
-              {!notifications?.length > 0 && <Text p={2}>No New Messages</Text>}
-              {notifications?.map(notification => {
+              {notifications?.length === 0 && <Text p={2}>No New Messages</Text>}
+              {notifications?.map((notification) => {
                 console.log(getSender(user, notification?.chat?.users));
                 return (
                 <MenuItem key={notification?._id} mb={1} onClick={() => {

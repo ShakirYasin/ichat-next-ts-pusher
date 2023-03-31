@@ -64,7 +64,7 @@ export const LoginForm = () => {
             localStorage.setItem('iChat_user', JSON.stringify(data))
             router.push('/chat')
         },
-        onError: (err) => {
+        onError: (err: any) => {
             console.log(err);
             toast({
                 title: "Error",
@@ -76,7 +76,7 @@ export const LoginForm = () => {
         }
     })
 
-    const submit = (values) => {
+    const submit = (values: any) => {
         login({...values})
     }
 
@@ -84,11 +84,11 @@ export const LoginForm = () => {
     return (
         <form onSubmit={handleSubmit(submit)}>
             <VStack spacing={3}>
-                <FormControl isInvalid={errors.email}>
+                <FormControl isInvalid={Boolean(errors.email)}>
                     <Input width={"100%"} placeholder='Email' type={"email"} {...register('email')} />
                     <FormErrorMessage>{errors?.email?.message}</FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={errors.password}>
+                <FormControl isInvalid={Boolean(errors.password)}>
                     <InputGroup>
                         <Input type={showPass ? "text" : "password"} placeholder='Password' {...register('password')} />
                         <InputRightElement width='3.5rem'>
@@ -117,7 +117,7 @@ export const LoginForm = () => {
 
 export const SignUpForm = () => {
     const [showPass, setShowPass] = useBoolean()
-    const imageRef = useRef(null)
+    const imageRef = useRef<any>(null)
     const [loading, setLoading] = useState(false)
     const toast = useToast()
     const router = useRouter()
@@ -140,7 +140,7 @@ export const SignUpForm = () => {
         },
         resolver: zodResolver(signupSchema)
     })
-    const postDetails = (file) => {
+    const postDetails = (file: File) => {
         setLoading(true);
         if(file === undefined) {
             toast({
@@ -187,7 +187,7 @@ export const SignUpForm = () => {
         mutate: signUp,
         isLoading
     } = useSignUp({
-        onSuccess: (data) => {
+        onSuccess: (data: IUser) => {
             toast({
                 title: "Success",
                 status: "success",
@@ -199,7 +199,7 @@ export const SignUpForm = () => {
             localStorage.setItem('iChat_user', JSON.stringify(data))
             router.push('/chat')
         },
-        onError: (err) => {
+        onError: (err: any) => {
             console.log(err);
             toast({
                 title: "Error",
@@ -212,7 +212,7 @@ export const SignUpForm = () => {
         }
     })
 
-    const submit = (values) => {
+    const submit = (values: any) => {
         const {confirmPassword, ...data} = values
         if(data.picture) {
             signUp({...data})
@@ -232,15 +232,15 @@ export const SignUpForm = () => {
                 getValues().picture && (
                     <Image src={getValues().picture} width={150} height={150} alt={""} borderRadius={"50%"} objectFit={"cover"} objectPosition={"top"} />
                 )}
-                <FormControl isInvalid={errors.name}>
+                <FormControl isInvalid={Boolean(errors.name)}>
                     <Input width={"full"} placeholder='Name' type={"text"} {...register('name')} />
                     <FormErrorMessage>{errors?.name?.message}</FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={errors.email}>
+                <FormControl isInvalid={Boolean(errors.email)}>
                     <Input width={"full"} placeholder='Email' type={"email"} {...register('email')} />
                     <FormErrorMessage>{errors?.email?.message}</FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={errors.password}>
+                <FormControl isInvalid={Boolean(errors.password)}>
                     <InputGroup>
                         <Input type={showPass ? "text" : "password"} placeholder='Password' {...register('password')} />
                         <InputRightElement width='3.5rem'>
@@ -255,7 +255,7 @@ export const SignUpForm = () => {
                     </InputGroup>
                     <FormErrorMessage>{errors?.password?.message}</FormErrorMessage>
                 </FormControl>
-                <FormControl isInvalid={errors.confirmPassword}>
+                <FormControl isInvalid={Boolean(errors.confirmPassword)}>
                     <InputGroup>
                         <Input type={showPass ? "text" : "password"} placeholder='Confirm Password' {...register('confirmPassword')} />
                         <InputRightElement width='3.5rem'>
@@ -278,6 +278,7 @@ export const SignUpForm = () => {
                     }
                     <Text color={getValues().picture ? "teal" : "whiteAlpha.400"} textAlign={"start"} >Upload Profile Image</Text>
                 </Flex>
+                    {/* @ts-ignore */}
                     <VisuallyHiddenInput type={"file"} ref={imageRef} accept={"image/*"} onChange={(e) => postDetails(e.target.files[0])} />
                 <Button isLoading={isLoading} type="submit" width={"full"} bg={"teal"}>SignUp</Button>
             </VStack>
