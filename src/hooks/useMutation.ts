@@ -2,6 +2,7 @@ import {useMutation, UseMutationOptions, useQueryClient} from "react-query"
 import axios from "../utils/axios"
 import {useChatContext} from "@/context/ChatProvider"
 import { unknown } from "zod"
+import { IChat, IMessage } from "@/types"
 
 export const useSignUp = (options: UseMutationOptions<unknown, unknown, unknown>) => {
     const {setUser} = useChatContext()
@@ -41,7 +42,7 @@ export const useLogin = (options: UseMutationOptions<unknown, unknown, unknown>)
     )
 }
     
-export const useAccessChat = (options: UseMutationOptions<unknown, unknown, unknown>) => {
+export const useAccessChat = (options: UseMutationOptions<IChat, unknown, unknown>) => {
     const {setSelectedChat} = useChatContext()
     return useMutation(
         async ({userId}) => {
@@ -62,7 +63,7 @@ export const useAccessChat = (options: UseMutationOptions<unknown, unknown, unkn
     )
 }
     
-export const useCreateGroupChat = (options: UseMutationOptions<unknown, unknown, unknown>) => {
+export const useCreateGroupChat = (options: UseMutationOptions<unknown, any, unknown>) => {
     const {setSelectedChat, setChats} = useChatContext()
     return useMutation(
         async (values) => {
@@ -130,7 +131,7 @@ export const useAddUserToGroup = (options: UseMutationOptions<unknown, unknown, 
     )
 }
     
-export const useRemoveUserFromGroup = (options: UseMutationOptions<unknown, unknown, unknown>) => {
+export const useRemoveUserFromGroup = (options: UseMutationOptions<IChat, any, unknown>) => {
     const queryClient = useQueryClient()
     const {setSelectedChat} = useChatContext()
     return useMutation(
@@ -154,7 +155,7 @@ export const useRemoveUserFromGroup = (options: UseMutationOptions<unknown, unkn
 }
 
    
-export const useSendMessage = (options: UseMutationOptions<unknown, unknown, unknown>) => {
+export const useSendMessage = (options: UseMutationOptions<IMessage, unknown, unknown>) => {
     const {setSelectedChat} = useChatContext()
     return useMutation(
         async (values) => {
@@ -166,12 +167,12 @@ export const useSendMessage = (options: UseMutationOptions<unknown, unknown, unk
             onSuccess: (data) => {
                 const latestMessage = {
                     ...data,
-                    chat: data?.chat?._id
+                    chat: data?.chat
                 }
                 setSelectedChat(prev => ({
                     ...prev,
                     latestMessage
-                }))
+                }) as IChat)
                 options?.onSuccess?.(data, unknown, unknown);
             } 
         }

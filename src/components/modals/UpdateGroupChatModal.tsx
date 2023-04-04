@@ -1,21 +1,26 @@
 import { DownloadIcon, Search2Icon } from '@chakra-ui/icons'
 import { Box, Button, Flex, Input, Modal, ModalBody, ModalContent, ModalOverlay, Spinner, Text, useDisclosure, useToast } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react'
-import useDebounce from '../../../hooks/useDebounce'
-import { useAddUserToGroup, useCreateGroupChat, useRemoveUserFromGroup, useRenameGroupChat } from '../../../hooks/useMutation'
-import { useSearch } from '../../../hooks/useQuery'
+import useDebounce from '@/hooks/useDebounce'
+import { useAddUserToGroup, useCreateGroupChat, useRemoveUserFromGroup, useRenameGroupChat } from '@/hooks/useMutation'
+import { useSearch } from '@/hooks/useQuery'
 import { useChatContext } from '../../Context/ChatProvider'
 import ChatLoading from '../ChatLoading'
 import UserBadge from '../User/UserBadge'
 import UserListItem from '../User/UserListItem'
+import { IChat, IUser } from '@/types'
+
+interface IProps {
+    children: React.ReactNode
+}
 
 
-const UpdateGroupChatModal = ({children}) => {
+const UpdateGroupChatModal = ({children}: IProps) => {
 
   const {isOpen, onOpen, onClose} = useDisclosure()
-  const [groupChatName, setGroupChatName] = useState("");
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [search, setSearch] = useState("")
+  const [groupChatName, setGroupChatName] = useState<string>("");
+  const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
+  const [search, setSearch] = useState<string>("")
   const toast = useToast()
   const { user: currentUser, chats, selectedChat, setSelectedChat } = useChatContext();
   const debouncedSearch = useDebounce(search, 500)
@@ -97,7 +102,7 @@ const close = () => {
     // setGo(false)
 }
 
-const handleAddUser = (user) => {
+const handleAddUser = (user: IUser) => {
     if(selectedUsers.find(item => item?._id === user?._id)) {
         toast({
             title: "Bruh!",
@@ -134,7 +139,7 @@ const handleRename = () => {
     })
 }
 
-const handleRemove = (user) => {
+const handleRemove = (user: IUser) => {
     if(selectedChat.groupAdmin?._id !== currentUser?._id && user?._id !== currentUser?._id) {
         toast({
             title: "DUDE!",
@@ -152,7 +157,7 @@ const handleRemove = (user) => {
         userId: user?._id
     })
 
-    user?._id === currentUser?._id ? setSelectedChat(null) : setSelectedChat(data)
+    user?._id === currentUser?._id ? setSelectedChat(null) : setSelectedChat(data as IChat)
 }
 
 useEffect(() => {
@@ -238,7 +243,7 @@ useEffect(() => {
                     ))}
                   </Box>
                   <Box
-                    display={users?.length > 0 ? "block" : "none"}
+                    display={users?.length as number > 0 ? "block" : "none"}
                     bg={'gray.700'}
                     rounded={"md"}
                     py={2}

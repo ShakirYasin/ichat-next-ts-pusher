@@ -1,8 +1,14 @@
+import { IUser } from '@/types'
 import { ViewIcon } from '@chakra-ui/icons'
 import { Box, Button, Center, IconButton, Image, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text, useDisclosure } from '@chakra-ui/react'
 import React from 'react'
 
-const ProfileModal = ({user, children}) => {
+interface IProps {
+  user: IUser;
+  children: React.ReactNode
+}
+
+const ProfileModal = ({user, children}: IProps) => {
 
     const {isOpen, onOpen, onClose} = useDisclosure()
 
@@ -18,6 +24,7 @@ const ProfileModal = ({user, children}) => {
                 display={{base: "flex"}}
                 icon={<ViewIcon />}
                 onClick={onOpen}
+                aria-label={"profile"}
             />
         )
     }

@@ -8,7 +8,7 @@ export interface ChatContextInterface {
     setUser: Dispatch<SetStateAction<IUser>>, 
     Logout: () => void, 
     selectedChat: IChat, 
-    setSelectedChat: Dispatch<SetStateAction<IChat>>
+    setSelectedChat: Dispatch<SetStateAction<IChat | null>>
     chats: IChat[], 
     setChats: Dispatch<SetStateAction<IChat[]>>, 
     notifications: IMessage[], 
@@ -43,10 +43,6 @@ const ChatProvider = ({children}: {children: React.ReactNode}) => {
             router.push('/chat')
         }
     }, [])  
-
-    useEffect(() => {
-        console.log({axios});
-    }, [axios])
 
     return <ChatContext.Provider value={{user, setUser, Logout, selectedChat, setSelectedChat, chats, setChats, notifications, setNotifications} as ChatContextInterface}>
         {children}

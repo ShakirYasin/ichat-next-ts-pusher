@@ -1,18 +1,20 @@
 import { ArrowBackIcon, ChatIcon, InfoOutlineIcon, SettingsIcon } from '@chakra-ui/icons'
 import { Badge, Box, Button, Center, Flex, FormControl, IconButton, Input, Spinner, Text, Tooltip } from '@chakra-ui/react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { useSendMessage } from '../../hooks/useMutation'
-import { useFetchMessages } from '../../hooks/useQuery'
+import { useSendMessage } from '@/hooks/useMutation'
+import { useFetchMessages } from '@/hooks/useQuery'
 import { getSender } from '../config/chatLogics'
 import { useChatContext } from '../Context/ChatProvider'
 import ProfileModal from './modals/ProfileModal'
 import UpdateGroupChatModal from './modals/UpdateGroupChatModal'
 import ScrollableChat from './ScrollableChat'
-import useSocket from "../../hooks/useSocket"
+import useSocket from "@/hooks/useSocket"
 import animationData from "../animations/typing-indicator.json"
 import Lottie from "react-lottie"
-import useDebounce from '../../hooks/useDebounce'
+import useDebounce from '@/hooks/useDebounce'
 import { useQueryClient } from 'react-query'
+import { IMessage } from '@/types'
+import { IChat } from '@/types'
 
 const defaultOptions = {
     loop: true,
@@ -26,14 +28,14 @@ const defaultOptions = {
 const SingleChat = () => {
     
     const {user, selectedChat, setSelectedChat, setNotifications, notifications, chats, setChats} = useChatContext()
-    const [newMessage, newMessageSet] = useState("")
-    const socket = useSocket()
-    const [socketConnected, setSocketConnected] = useState(false)
-    const [messages, setMessages] = useState([])
-    const [guestTyping, setGuestTyping] = useState(false)
-    const [meTyping, setMeTyping] = useState(false)
+    const [newMessage, newMessageSet] = useState<string>("")
+    // const socket = useSocket()
+    // const [socketConnected, setSocketConnected] = useState<boolean>(false)
+    const [messages, setMessages] = useState<IMessage[]>([])
+    const [guestTyping, setGuestTyping] = useState<boolean>(false)
+    const [meTyping, setMeTyping] = useState<boolean>(false)
     const debouncedTyping = useDebounce(newMessage, 3000)
-    const chatRef = useRef(null)
+    const chatRef = useRef<IChat | null>(null)
     const queryClient = useQueryClient()
     // var selectedChatCompare;
 
@@ -45,10 +47,10 @@ const SingleChat = () => {
         mutate: mutateSendMessage,
         isLoading
     } = useSendMessage({
-        onSuccess: (data) => {
+        onSuccess: (data: IMessage) => {
             newMessageSet("")
             setMessages([...messages, data])
-            socket.emit("new message", data)
+            // socket.emit("new message", data)
             setChats([selectedChat, ...chats.filter((c) => c._id !== selectedChat?._id)])
         }
     })
@@ -60,13 +62,13 @@ const SingleChat = () => {
     }, {
         onSuccess: (data) => {
             setMessages(data)
-            socket.emit("join chat", selectedChat?._id)
+            // socket.emit("join chat", selectedChat?._id)
         }
     })
 
-    const sendMessage = (e) => {
+    const sendMessage = (e: any) => {
         if(e.key === "Enter" && newMessage) {
-            socket.emit("stop typing", selectedChat?._id)
+            // socket.emit("stop typing", selectedChat?._id)
             mutateSendMessage({
                 content: newMessage,
                 chatId: selectedChat?._id
@@ -74,21 +76,21 @@ const SingleChat = () => {
         }
     }
     const sendMessageByButton = () => {
-        socket.emit("stop typing", selectedChat?._id)
+        // socket.emit("stop typing", selectedChat?._id)
         mutateSendMessage({
             content: newMessage,
             chatId: selectedChat?._id
         })
     }
-    const typingHandler = (e) => {
+    const typingHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         newMessageSet(e.target.value)
         // Typing Indicator Logic
 
-        if(!socketConnected) return
+        // if(!socketConnected) return
         
         if(!guestTyping) {
             setMeTyping(true)
-            socket.emit("typing", selectedChat?._id)
+            // socket.emit("typing", selectedChat?._id)
         }
     }
 
@@ -96,38 +98,38 @@ const SingleChat = () => {
         if(!meTyping) return
 
         if(debouncedTyping && meTyping) {
-            socket.emit("stop typing", selectedChat?._id)
+            // socket.emit("stop typing", selectedChat?._id)
             setMeTyping(false)    
         }
     }, [meTyping, debouncedTyping])
 
-    useEffect(() => {
-        socket.emit("setup", user)
-        socket.on("connected", () => setSocketConnected(true))
-        socket.on("typing", () => setGuestTyping(true))
-        socket.on("stop typing", () => setGuestTyping(false))
-    }, [socket])
+    // useEffect(() => {
+    //     socket.emit("setup", user)
+    //     socket.on("connected", () => setSocketConnected(true))
+    //     socket.on("typing", () => setGuestTyping(true))
+    //     socket.on("stop typing", () => setGuestTyping(false))
+    // }, [socket])
 
     useEffect(() => {
         chatRef.current = selectedChat
         setGuestTyping(false)
     }, [selectedChat])
 
-    useEffect(() => {
-        socket.on("message recieved", (newMessageRecieved) => {
-            if(!chatRef.current?._id || chatRef.current?._id !== newMessageRecieved.chat._id) {
-                // give notification
-                if(!notifications.includes(newMessageRecieved)) {
-                    setNotifications([newMessageRecieved, ...notifications])
-                    // queryClient.invalidateQueries({ queryKey: ['chats'] })
-                    setChats([newMessageRecieved?.chat, ...chats.filter((c) => c._id !== newMessageRecieved?.chat?._id)])
-                }
-            }
-            else {
-                setMessages([...messages, newMessageRecieved])
-            }
-        })
-    }, [socket, messages, chats, notifications])
+    // useEffect(() => {
+    //     socket.on("message recieved", (newMessageRecieved: IMessage) => {
+    //         if(!chatRef.current?._id || chatRef.current?._id !== newMessageRecieved.chat._id) {
+    //             // give notification
+    //             if(!notifications.includes(newMessageRecieved)) {
+    //                 setNotifications([newMessageRecieved, ...notifications])
+    //                 // queryClient.invalidateQueries({ queryKey: ['chats'] })
+    //                 setChats([newMessageRecieved?.chat, ...chats.filter((c) => c._id !== newMessageRecieved?.chat?._id)])
+    //             }
+    //         }
+    //         else {
+    //             setMessages([...messages, newMessageRecieved])
+    //         }
+    //     })
+    // }, [socket, messages, chats, notifications])
 
     if(!selectedChat) {
         return (
@@ -149,6 +151,7 @@ const SingleChat = () => {
                 icon={
                     <ArrowBackIcon />
                 }
+                aria-label={"back"}
             />
                 {!selectedChat.isGroup ? 
                     <>

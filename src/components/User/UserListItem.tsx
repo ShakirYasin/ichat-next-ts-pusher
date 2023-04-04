@@ -1,7 +1,15 @@
+import { IUser } from '@/types'
 import { Avatar, Box, Flex, Text } from '@chakra-ui/react'
 import React from 'react'
 
-const UserListItem = ({user, handleFn, users, i}) => {
+interface IProps {
+    user: IUser;
+    handleFn: () => void;
+    users: IUser[];
+    i: number
+}
+
+const UserListItem = ({user, handleFn, users, i}: IProps) => {
   return (
     <Flex
         onClick={handleFn}

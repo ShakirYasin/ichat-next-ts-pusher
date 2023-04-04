@@ -2,18 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { Box, Button, Center, Flex, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text, useDisclosure, useToast } from '@chakra-ui/react'
 import { Search2Icon } from '@chakra-ui/icons'
 import { useChatContext } from '../../Context/ChatProvider'
-import { useSearch } from '../../../hooks/useQuery'
-import { useAccessChat, useCreateGroupChat } from '../../../hooks/useMutation'
+import { useSearch } from '@/hooks/useQuery'
+import { useAccessChat, useCreateGroupChat } from '@/hooks/useMutation'
 import ChatLoading from '../ChatLoading'
 import UserListItem from '../User/UserListItem'
-import useDebounce from '../../../hooks/useDebounce'
+import useDebounce from '@/hooks/useDebounce'
 import UserBadge from '../User/UserBadge'
-const GroupChatModal = ({children}) => {
+import { IUser } from '@/types'
+
+interface IProps {
+  children: React.ReactNode
+}
+
+const GroupChatModal = ({children}: IProps) => {
 
   const {isOpen, onOpen, onClose} = useDisclosure()
-  const [groupChatName, setGroupChatName] = useState("");
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [search, setSearch] = useState("")
+  const [groupChatName, setGroupChatName] = useState<string>("");
+  const [selectedUsers, setSelectedUsers] = useState<IUser[]>([]);
+  const [search, setSearch] = useState<string>("")
   const toast = useToast()
   const { user, chats } = useChatContext();
   const debouncedSearch = useDebounce(search, 500)
@@ -66,17 +72,17 @@ const close = () => {
     // setGo(false)
 }
 
-const handleGroup = (user) => {
+const handleGroup = (user: IUser) => {
   if(selectedUsers.find(item => item?._id === user?._id)) return
   
   setSelectedUsers([...selectedUsers, user])
 }
 
-const handleRemove = (user) => {
+const handleRemove = (user: IUser) => {
   setSelectedUsers(selectedUsers.filter(u => u._id !== user?._id))
 }
 
-const handleCreate = (e) => {
+const handleCreate = (e: any) => {
   e.preventDefault()
   if(!groupChatName) {
 
@@ -175,7 +181,7 @@ const handleCreate = (e) => {
                     ))}
                   </Box>
                   <Box
-                    display={users?.length > 0 ? "block" : "none"}
+                    display={users?.length as number > 0 ? "block" : "none"}
                     bg={'gray.700'}
                     rounded={"md"}
                     py={2}

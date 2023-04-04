@@ -2,8 +2,14 @@ import { Avatar, Badge, Box, Flex, Image, Text } from '@chakra-ui/react'
 import React from 'react'
 import { getSender } from '../../config/chatLogics'
 import { useChatContext } from '../../Context/ChatProvider'
+import { IChat } from '@/types'
 
-const UserChatItem = ({chat, handleFn}) => {
+interface IProps {
+    chat: IChat;
+    handleFn: () => void
+}
+
+const UserChatItem = ({chat, handleFn}: IProps) => {
     
     const {user, selectedChat, notifications} = useChatContext()
 

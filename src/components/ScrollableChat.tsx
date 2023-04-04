@@ -3,8 +3,13 @@ import React from 'react'
 import ScrollableFeed from "react-scrollable-feed"
 import { isFirstMessageFromSender, isLastMessageFromSender } from '../config/chatLogics'
 import { useChatContext } from '../Context/ChatProvider'
+import {IMessage} from '@/types'
 
-const ScrollableChat = ({messages}) => {
+interface IProps {
+    messages: IMessage[]
+}
+
+const ScrollableChat = ({messages}: IProps) => {
     const {user, selectedChat} = useChatContext()
     return (
     <ScrollableFeed className='scrollable-chat'>

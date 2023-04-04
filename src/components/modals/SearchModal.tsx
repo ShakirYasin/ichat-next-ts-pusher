@@ -2,14 +2,20 @@ import React, { useEffect, useState } from 'react'
 import { Box, Button, Center, Flex, Image, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text, useDisclosure, useToast } from '@chakra-ui/react'
 import { Search2Icon } from '@chakra-ui/icons'
 import { useChatContext } from '../../Context/ChatProvider'
-import { useSearch } from '../../../hooks/useQuery'
-import { useAccessChat } from '../../../hooks/useMutation'
+import { useSearch } from '@/hooks/useQuery'
+import { useAccessChat } from '@/hooks/useMutation'
 import ChatLoading from '../ChatLoading'
 import UserListItem from '../User/UserListItem'
-import useDebounce from '../../../hooks/useDebounce'
+import useDebounce from '@/hooks/useDebounce'
 
+interface IProps {
+    children: React.ReactNode;
+    isOpen: boolean;
+    onOpen: () => void;
+    onClose: () => void
+}
 
-const SearchModal = ({children, isOpen, onOpen, onClose}) => {
+const SearchModal = ({children, isOpen, onOpen, onClose}: IProps) => {
 
     
     const [search, setSearch] = useState('')
@@ -69,7 +75,7 @@ const SearchModal = ({children, isOpen, onOpen, onClose}) => {
     //     // setGo(true)
     // }
 
-    const accessChat = (id) => {
+    const accessChat = (id: string) => {
         mutateAccessChat({
             userId: id
         })
@@ -92,7 +98,7 @@ const SearchModal = ({children, isOpen, onOpen, onClose}) => {
         <ModalOverlay />
         <ModalContent shadow={"none"}>
             <ModalBody>
-                <Flex align={"center"} mb={users?.length > 0 ? 5 : 0}>
+                <Flex align={"center"} mb={users?.length as number > 0 ? 5 : 0}>
                     <Search2Icon color={"teal"} boxSize={25} />
                     <Input 
                         placeholder={'Search by name or email'}
@@ -115,11 +121,13 @@ const SearchModal = ({children, isOpen, onOpen, onClose}) => {
                     <ChatLoading vertCount={3} />
                     :
                     (
-                        users?.map(user => (
+                        users?.map((user, i) => (
                             <UserListItem
                                 key={user?._id}
                                 user={user}
                                 handleFn={() => accessChat(user?._id)}
+                                i={i}
+                                users={users}
                             />
                         ))
                     )

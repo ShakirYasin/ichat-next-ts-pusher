@@ -4,6 +4,7 @@ import { useChatContext } from '@/Context/ChatProvider'
 import Navbar from "@/components/layout/Navbar"
 import MyChats from "@/components/MyChats"
 import ChatBox from "@/components/ChatBox"
+import { GetServerSidePropsContext } from 'next';
 
 const Chat = () => {
  
@@ -19,5 +20,6 @@ const Chat = () => {
     </Box>
   )
 }
+
 
 export default Chat
