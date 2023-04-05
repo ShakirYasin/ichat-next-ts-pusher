@@ -33,5 +33,6 @@ const chatModel = new mongoose.Schema<IChatModel>(
     }
 )
 
-const Chat = mongoose.model<IChatModel>("Chat", chatModel)
-module.exports = Chat
+const Chat = mongoose.models.Chat || mongoose.model<IChatModel>("Chat", chatModel)
+
+export default Chat

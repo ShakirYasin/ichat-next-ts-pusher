@@ -213,7 +213,7 @@ const SingleChat = () => {
                     />
                 </FormControl>
                 <Tooltip label={"Send"} placement={"top"} hasArrow rounded={10}>
-                    <Button isLoading={isLoading} onClick={sendMessageByButton}>
+                    <Button isLoading={isLoading} isDisabled={!newMessage} onClick={sendMessageByButton}>
                         <ChatIcon />
                     </Button>
                 </Tooltip>

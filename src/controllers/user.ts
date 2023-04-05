@@ -49,17 +49,15 @@ const authUser = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const user = await User.findOne({email})
-    console.log({user});
-    // if(user && (await user.matchPassword(password))) {
-    //     res.status(201).json({
-    //         _id: user._id,
-    //         name: user.name,
-    //         email: user.email,
-    //         picture: user.picture,
-    //         token: generateToken(user._id)
-    //     })
-    // }
-
+    if(user && (await user.matchPassword(password))) {
+        res.status(201).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            picture: user.picture,
+            token: generateToken(user._id)
+        })
+    }
 }
 
 

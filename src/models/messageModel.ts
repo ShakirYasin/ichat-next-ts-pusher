@@ -21,6 +21,6 @@ const messageModel = new mongoose.Schema<IMessageModel>(
     }
 )
 
-const Messasge = mongoose.model<IMessageModel>('Message', messageModel)
+const Message = mongoose.models.Message || mongoose.model<IMessageModel>('Message', messageModel)
 
-module.exports = Messasge
+export default Message

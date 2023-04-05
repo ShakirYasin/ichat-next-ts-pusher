@@ -1,16 +1,43 @@
-import mongoose, {ConnectOptions} from "mongoose"
-import colors from "colors"
+// /lib/dbConnect.js
+import mongoose from 'mongoose'
 
-const connectDB = async () => {
-    try {
-        const connect = await mongoose.connect(process.env.NEXT_PUBLIC_MONGO_URI as string)
+/** 
+Source : 
+https://github.com/vercel/next.js/blob/canary/examples/with-mongodb-mongoose/utils/dbConnect.js 
+**/
 
-        console.log(`MongoDB Connected: ${connect.connection.host}`.cyan.underline.bold);
-        return connect
-    } catch (error: any) {
-        console.log(`Error: ${error.message}`.red.bold);
-        process.exit()
-    }
+
+const MONGODB_URI = process.env.NEXT_PUBLIC_MONGO_URI
+
+if (!MONGODB_URI) {
+  throw new Error(
+    'Please define the MONGODB_URI environment variable inside .env.local'
+  )
 }
 
-export default connectDB
+/**
+ * Global is used here to maintain a cached connection across hot reloads
+ * in development. This prevents connections growing exponentially
+ * during API Route usage.
+ */
+let cached = global.mongoose
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null }
+}
+
+async function dbConnect () {
+  if (cached.conn) {
+    return cached.conn
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGODB_URI as string).then(mongoose => {
+      return mongoose
+    })
+  }
+  cached.conn = await cached.promise
+  return cached.conn
+}
+
+export default dbConnect

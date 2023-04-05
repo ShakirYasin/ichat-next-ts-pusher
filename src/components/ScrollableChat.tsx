@@ -21,11 +21,11 @@ const ScrollableChat = ({messages}: IProps) => {
                         <Text pl={1} pb={1} fontSize={"12px"} color={"whiteAlpha.600"} >{message?.sender?.name}</Text>
                     </Flex>
                 }
-                <Flex gap={2}>
+                <Flex gap={2} align={"center"}>
                     {isLastMessageFromSender(messages, i, user, selectedChat) ?
-                        <Avatar src={message?.sender?.picture} boxSize={6} />
+                        <Avatar src={message?.sender?.picture} boxSize={8} />
                         :
-                        <Box boxSize={6}></Box>
+                        <Box boxSize={8}></Box>
                     }
                     <Box key={message?._id} display={"flex"} bg={user?._id === message?.sender?._id ? "teal" : "gray.600"} width={"max-content"} py={"7px"} px={3} maxWidth={"70%"} mb={2} rounded={10} ml={user?._id === message?.sender?._id ? "auto" : "0"}>
                         <Text fontSize={"14px"} fontWeight={"600"}>{message?.content}</Text>

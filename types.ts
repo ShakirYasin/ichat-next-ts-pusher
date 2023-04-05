@@ -1,4 +1,5 @@
 import { Types } from "mongoose"
+import { NextApiRequest } from "next";
 
 export interface IUser {
     _id: string;
@@ -41,4 +42,14 @@ export interface IMessageModel {
     sender: Types.ObjectId,
     content:string,
     chat: Types.ObjectId,
+}
+
+
+export interface ExtendedRequest extends NextApiRequest  {
+    user: IUser
+}
+export interface ExtendedRequestWithParams extends ExtendedRequest  {
+    params: {
+        chatId: string
+    }
 }
