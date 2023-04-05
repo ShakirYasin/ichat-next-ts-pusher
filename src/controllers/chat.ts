@@ -24,6 +24,7 @@ const accessChat = async (req: NextApiRequest, res: NextApiResponse) => {
         select: "name pic email"
     })
 
+
     if(isChat.length > 0) {
         res.json(isChat[0])
     }
