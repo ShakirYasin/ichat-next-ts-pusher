@@ -1,5 +1,6 @@
 import Pusher, {Options} from "pusher"
 import PusherClient from "pusher-js"
+import axios from "@/utils/axios"
 
 let cached = global.pusher
 
@@ -19,25 +20,21 @@ function pusherConnect (): Pusher {
         cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER as string,
         useTLS: true,
     });
-    console.log({cached});
     return cached
   }
 
-function pusherClientConnect (): PusherClient {
+// function pusherClientConnect (): PusherClient {
 
-  const pusher = new PusherClient(process.env.NEXT_PUBLIC_PUSHER_KEY as string, {
-    cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER as string,
-    forceTLS: true,
-  })
+//   const pusher = 
 
-  return pusher
-}
+//   return pusher
+// }
 
 const pusher = pusherConnect()
-const pusherClient = pusherClientConnect()
+// const pusherClient = pusherClientConnect()
 
 
 export {
   pusher,
-  pusherClient
+  // pusherClient
 }

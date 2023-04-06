@@ -7,6 +7,7 @@ import nc from "next-connect";
 import User from "../models/userModel"
 import Chat from "../models/chatModel"
 import Message from "../models/messageModel"
+import { pusher } from "@/config/pusher";
 
 
 const sendMessage = async (req: ExtendedRequest, res: NextApiResponse) => {
@@ -39,6 +40,8 @@ const sendMessage = async (req: ExtendedRequest, res: NextApiResponse) => {
             latestMessage: message
         });
 
+        pusher.trigger(chatId, "new-message", message)
+        pusher.sendToUser()
         res.status(200).json(message)
 
     } catch (error: any) {

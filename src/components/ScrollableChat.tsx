@@ -14,7 +14,7 @@ const ScrollableChat = ({messages}: IProps) => {
     return (
     <ScrollableFeed className='scrollable-chat'>
         {messages?.length > 0 && messages?.map((message, i) => (
-            <Box>
+            <Box key={i}>
                 {isFirstMessageFromSender(messages, i, user, selectedChat) && 
                     <Flex>
                         <Box width={8}></Box>

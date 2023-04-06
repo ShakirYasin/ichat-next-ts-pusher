@@ -7,6 +7,9 @@ import * as z from "zod"
 import { useLogin, useSignUp } from "@/hooks/useMutation"
 import { useRouter } from "next/router"
 import { IUser } from "types"
+import { useChatContext } from "@/Context/ChatProvider"
+import PusherClientInstance from "pusher-js"
+
 
 const signupSchema = z.object({
     name: z.string().min(2, {message: "Required"}),
@@ -31,6 +34,7 @@ const loginSchema = z.object({
 
 export const LoginForm = () => {
 
+    const {setPusherClient} = useChatContext()
     const toast = useToast()
     const router = useRouter()
     const {
@@ -62,6 +66,19 @@ export const LoginForm = () => {
                 position: "bottom"
             })
             localStorage.setItem('iChat_user', JSON.stringify(data))
+            const pc = new PusherClientInstance(process.env.NEXT_PUBLIC_PUSHER_KEY as string, {
+                cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER as string,
+                forceTLS: true,
+                userAuthentication: {
+                  endpoint: "/api/pusher/user-auth",
+                  transport: "ajax",
+                  headers: {
+                    Authorization: `Bearer ${data?.token}`
+                  }
+                }
+            })
+            pc.signin()
+            setPusherClient(pc)
             router.push('/chat')
         },
         onError: (err: any) => {
@@ -121,6 +138,7 @@ export const SignUpForm = () => {
     const [loading, setLoading] = useState(false)
     const toast = useToast()
     const router = useRouter()
+    const {setPusherClient} = useChatContext()
 
     const {
         register, 
@@ -197,6 +215,19 @@ export const SignUpForm = () => {
                 position: "bottom"
             })
             localStorage.setItem('iChat_user', JSON.stringify(data))
+            const pc = new PusherClientInstance(process.env.NEXT_PUBLIC_PUSHER_KEY as string, {
+                cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER as string,
+                forceTLS: true,
+                userAuthentication: {
+                  endpoint: "/api/pusher/user-auth",
+                  transport: "ajax",
+                  headers: {
+                    Authorization: `Bearer ${data?.token}`
+                  }
+                }
+            })
+            pc.signin()
+            setPusherClient(pc)
             router.push('/chat')
         },
         onError: (err: any) => {

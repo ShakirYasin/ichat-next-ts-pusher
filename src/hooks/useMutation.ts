@@ -2,9 +2,9 @@ import {useMutation, UseMutationOptions, useQueryClient} from "react-query"
 import axios from "../utils/axios"
 import {useChatContext} from "@/context/ChatProvider"
 import { unknown } from "zod"
-import { IChat, IMessage } from "@/types"
+import { IChat, IMessage, IUser } from "@/types"
 
-export const useSignUp = (options: UseMutationOptions<unknown, unknown, unknown>) => {
+export const useSignUp = (options: UseMutationOptions<IUser, unknown, unknown>) => {
     const {setUser} = useChatContext()
     return useMutation(
         async (values) => {
@@ -13,7 +13,7 @@ export const useSignUp = (options: UseMutationOptions<unknown, unknown, unknown>
         },
         {
             ...options,
-            onSuccess: (data) => {
+            onSuccess: (data: IUser & {token: string}) => {
                 console.log({RegisterResponse: data});
                 setUser(data)
                 axios.defaults.headers['Authorization'] = `Bearer ${data?.token}`
@@ -23,7 +23,7 @@ export const useSignUp = (options: UseMutationOptions<unknown, unknown, unknown>
         )
     }
     
-export const useLogin = (options: UseMutationOptions<unknown, unknown, unknown>) => {
+export const useLogin = (options: UseMutationOptions<IUser, unknown, unknown>) => {
     const {setUser} = useChatContext()
     return useMutation(
         async (values) => {
@@ -32,7 +32,7 @@ export const useLogin = (options: UseMutationOptions<unknown, unknown, unknown>)
         },
         {
             ...options,
-            onSuccess: (data) => {
+            onSuccess: (data: IUser & {token: string}) => {
                 console.log({LoginResponse: data});
                 setUser(data)
                 axios.defaults.headers['Authorization'] = `Bearer ${data?.token}`

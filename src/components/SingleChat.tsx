@@ -16,6 +16,7 @@ import { useQueryClient } from 'react-query'
 import { IMessage } from '@/types'
 import { IChat } from '@/types'
 
+
 const defaultOptions = {
     loop: true,
     autoPlay: true,
@@ -27,7 +28,7 @@ const defaultOptions = {
 
 const SingleChat = () => {
     
-    const {user, selectedChat, setSelectedChat, setNotifications, notifications, chats, setChats} = useChatContext()
+    const {user, selectedChat, setSelectedChat, setNotifications, notifications, chats, setChats, channel, pusherClient} = useChatContext()
     const [newMessage, newMessageSet] = useState<string>("")
     // const socket = useSocket()
     // const [socketConnected, setSocketConnected] = useState<boolean>(false)
@@ -36,12 +37,11 @@ const SingleChat = () => {
     const [meTyping, setMeTyping] = useState<boolean>(false)
     const debouncedTyping = useDebounce(newMessage, 3000)
     const chatRef = useRef<IChat | null>(null)
-    const queryClient = useQueryClient()
     // var selectedChatCompare;
 
     useEffect(() => {
-        console.log(messages[0]);
-    }, [messages])
+        console.log({channel});
+    }, [channel])
 
     const {
         mutate: mutateSendMessage,
@@ -114,6 +114,26 @@ const SingleChat = () => {
         chatRef.current = selectedChat
         setGuestTyping(false)
     }, [selectedChat])
+
+    useEffect(() => {
+        if(channel) {
+            channel.bind("new-message", (newMessage: any) => {
+                if(newMessage.sender._id !== user?._id) {
+                    if(selectedChat?._id !== newMessage.chat._id) {
+                        // give notification
+                        if(!notifications.includes(newMessage)) {
+                            setNotifications([newMessage, ...notifications])
+                            // queryClient.invalidateQueries({ queryKey: ['chats'] })
+                            setChats([newMessage?.chat, ...chats.filter((c) => c._id !== newMessage?.chat?._id)])
+                        }
+                    }
+                    else {
+                        setMessages([...messages, newMessage])
+                    }
+                }
+            })
+        }
+    }, [pusherClient, channel, messages, notifications])
 
     // useEffect(() => {
     //     socket.on("message recieved", (newMessageRecieved: IMessage) => {

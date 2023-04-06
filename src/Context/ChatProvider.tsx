@@ -1,7 +1,10 @@
 import { useRouter } from "next/router";
-import {createContext, Dispatch, SetStateAction, useContext, useEffect, useState} from "react"
+import {createContext, Dispatch, SetStateAction, useContext, useEffect, useMemo, useState} from "react"
 import { IUser, IChat, IMessage } from "../../types";
 import axios from '../utils/axios'
+import PusherClientInstance from "pusher-js"
+import { Channel } from "pusher-js";
+
 
 export interface ChatContextInterface {
     user: IUser, 
@@ -13,6 +16,9 @@ export interface ChatContextInterface {
     setChats: Dispatch<SetStateAction<IChat[]>>, 
     notifications: IMessage[], 
     setNotifications: Dispatch<SetStateAction<IMessage[]>>
+    channel: Channel;
+    pusherClient: PusherClientInstance
+    setPusherClient: Function;
 }
 
 const ChatContext = createContext<ChatContextInterface>({} as ChatContextInterface);
@@ -23,6 +29,21 @@ const ChatProvider = ({children}: {children: React.ReactNode}) => {
     const [selectedChat, setSelectedChat] = useState<IChat | null>(null)
     const [chats, setChats] = useState<IChat[] | null>([])
     const [notifications, setNotifications] = useState<IMessage[] | null>([])
+    const [pusherClient, setPusherClient] = useState<PusherClientInstance>({} as PusherClientInstance)
+    
+    // const pusherClient = useMemo<PusherClientInstance | null>(() => {
+    //     if(user?.token) {
+    //         console.log("Authorization in Context Pusher Memo: ", user?.token);
+    //         return 
+    //     }
+    //     return null
+    // }, [user?.token])
+
+    const channel = useMemo(() => {
+        if(selectedChat?._id && pusherClient) {
+            return pusherClient.subscribe(selectedChat?._id as string)
+        }
+    }, [selectedChat?._id])
     const router = useRouter();
 
     const Logout = () => {
@@ -44,7 +65,19 @@ const ChatProvider = ({children}: {children: React.ReactNode}) => {
         }
     }, [])  
 
-    return <ChatContext.Provider value={{user, setUser, Logout, selectedChat, setSelectedChat, chats, setChats, notifications, setNotifications} as ChatContextInterface}>
+    useEffect(() => {
+        if(!user?._id && pusherClient.disconnect) {
+            return () => {
+                pusherClient.disconnect()
+            }
+        }
+    }, [user, pusherClient])
+    
+    useEffect(() => {
+        console.log({pusherClient});
+    }, [pusherClient])
+
+    return <ChatContext.Provider value={{user, setUser, Logout, selectedChat, setSelectedChat, chats, setChats, notifications, setNotifications, channel, pusherClient, setPusherClient} as ChatContextInterface}>
         {children}
     </ChatContext.Provider>
 }
